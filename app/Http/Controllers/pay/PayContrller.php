@@ -24,20 +24,25 @@ class PayContrller extends Controller
             'biz_content'=>json_encode($request_data)
         ];
         ksort($data);
+
+        //echo '<pre>';print_r($data);
         $str = '';
         foreach ($data as $k=>$v){
             $str .= $k.'='.$v.'&';
         }
         $str = rtrim($str,'&');
-        $priv_key = storage_path('pay_key/priv.pem');
+        //echo $str;die;
+        $priv_key = storage_path('pay_key/private.pem');
         //openssl_sign(数据字符串&分割，生成的签名，私钥路径)
-        openssl_sign($str,$sign,openssl_get_privatekey("file://".$priv_key),OPENSSL_ALGO_SHA256);
-        $sign = base64_encode($sign);
-        $data['sign'] = $sign;
-        $client = new Client();
-        $url = "https://openapi.alipaydev.com/gateway.do";
-        $response = $client->request('post',$url,['form_params'=>$data]);
-        $body = $response->getBody();
-        echo $body;
+        openssl_sign($str,$sign0,openssl_get_privatekey("file://".$priv_key));
+        $sign = base64_encode($sign0);
+        //$data['sign'] = $sign;
+        //$client = new Client();
+        $url = "https://openapi.alipaydev.com/gateway.do?";
+        $req_url = $url.$str .'&sign='.$sign;
+        //echo $req_url;
+        //$response = $client->request('post',$url,['form_params'=>$data]);
+        //$body = $response->getBody();
+        header("Location:".$req_url);
     }
 }
