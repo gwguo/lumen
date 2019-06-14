@@ -29,10 +29,9 @@ class PayContrller extends Controller
             $str .= $k.'='.$v.'&';
         }
         $str = rtrim($str,'&');
-        $priv_key = storage_path('pay_key/private.pem');
-
+        $priv_key = storage_path('pay_key/priv.pem');
         //openssl_sign(数据字符串&分割，生成的签名，私钥路径)
-        openssl_sign($str,$sign,openssl_get_privatekey(file_get_contents($priv_key)),OPENSSL_ALGO_SHA256);
+        openssl_sign($str,$sign,openssl_get_privatekey("file://".$priv_key),OPENSSL_ALGO_SHA256);
         $sign = base64_encode($sign);
         $data['sign'] = $sign;
         $client = new Client();
